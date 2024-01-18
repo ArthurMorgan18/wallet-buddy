@@ -1,11 +1,36 @@
 'use client';
-import React from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { IAuthOptionCard } from '@/app/auth/components/AuthOptionCard';
 import { useAppSelector } from '@/app/hooks';
 import AuthTextField from '@/app/auth/components/AuthTextField';
+import { IAuthInput } from '@/app/auth/constants/types';
 
 const OptionModal = ({ option, title }: IAuthOptionCard) => {
-  const inputsData = useAppSelector((state) => state.auth.inputs);
+  const inputsData: IAuthInput[] = useAppSelector((state) => state.auth.inputs);
+
+  //TODO: INPUTS VALIDATION LOGIC
+
+  const [formValues, setFormValues] = useState({});
+
+  const handleInputChange = useCallback((key: string, value: string) => {
+    setFormValues((prevValues) => ({ ...prevValues, [key]: value }));
+  }, []);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const values: { [key: string]: string } = {};
+    // @ts-ignore
+    const inputs = [...event.target];
+    inputs.forEach((input) => (values[input.name] = input.value));
+  };
+
+  const isValidState = useMemo(() => {
+    const values = Object.values(formValues);
+    return values.every((value) => value !== '');
+  }, [formValues]);
+
+  const isSubmitDisabled = inputsData.length !== Object.keys(formValues).length && isValidState;
+
   return (
     <dialog id={`choiceModal__${option}`} className='modal'>
       <div className='modal-box'>
@@ -15,15 +40,24 @@ const OptionModal = ({ option, title }: IAuthOptionCard) => {
           </button>
         </form>
         <h3 className='font-bold text-lg'>{title.toUpperCase()}</h3>
-        {inputsData.map((input, key) => (
-          <div className='mb-5 mt-2.5' key={key}>
-            <AuthTextField
-              inputType={input.type}
-              placeholder={input.placeholder}
-            />
-          </div>
-        ))}
-        <button className='btn btn-block confirm-button'>Submit</button>
+        <form onSubmit={handleSubmit}>
+          {inputsData.map((input, key) => (
+            <div className='mb-5 mt-2.5' key={key}>
+              <AuthTextField
+                name={input.name}
+                inputType={input.type}
+                placeholder={input.placeholder}
+                onInputChange={handleInputChange}
+                inputKey={input.name}
+              />
+            </div>
+          ))}
+          <input
+            type='submit'
+            disabled={isSubmitDisabled}
+            className='btn btn-block confirm-button'
+          />
+        </form>
       </div>
     </dialog>
   );

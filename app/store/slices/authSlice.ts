@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { loginInputs, signUpInputs } from '@/app/common/mock/auth';
+import { IAuthInput } from '@/app/auth/constants/types';
 
 export interface IAuthState {
   option: 'login' | 'signUp' | null;
-  inputs: Array<{}>;
+  inputs: Array<IAuthInput>;
 }
 
 const initialState: IAuthState = {
