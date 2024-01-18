@@ -4,12 +4,10 @@ import { IAuthOptionCard } from '@/app/auth/components/AuthOptionCard';
 import { useAppSelector } from '@/app/hooks';
 import AuthTextField from '@/app/auth/components/AuthTextField';
 import { IAuthInput } from '@/app/auth/constants/types';
+import Validator, { InputType } from '@/app/utils/Validator';
 
 const OptionModal = ({ option, title }: IAuthOptionCard) => {
   const inputsData: IAuthInput[] = useAppSelector((state) => state.auth.inputs);
-
-  //TODO: INPUTS VALIDATION LOGIC
-
   const [formValues, setFormValues] = useState({});
 
   const handleInputChange = useCallback((key: string, value: string) => {
@@ -29,7 +27,8 @@ const OptionModal = ({ option, title }: IAuthOptionCard) => {
     return values.every((value) => value !== '');
   }, [formValues]);
 
-  const isSubmitDisabled = inputsData.length !== Object.keys(formValues).length && isValidState;
+  const isSubmitDisabled =
+    inputsData.length !== Object.keys(formValues).length && isValidState;
 
   return (
     <dialog id={`choiceModal__${option}`} className='modal'>
@@ -49,6 +48,12 @@ const OptionModal = ({ option, title }: IAuthOptionCard) => {
                 placeholder={input.placeholder}
                 onInputChange={handleInputChange}
                 inputKey={input.name}
+                inputValidationStatus={Validator.isAuthInputValid(
+                  input.pattern,
+                  //@ts-ignore
+                  formValues[input.name],
+                  input.type as InputType
+                )}
               />
             </div>
           ))}

@@ -16,7 +16,8 @@ export const loginInputs = [
     type: 'password',
     name: 'password',
     placeholder: 'Enter Password',
-    pattern: '[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$',
+    pattern:
+      '^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$',
   },
 ];
 
@@ -25,7 +26,7 @@ export const signUpInputs = [
     type: 'text',
     name: 'firstName',
     placeholder: 'Enter First Name',
-    pattern: '[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$',
+    pattern: "^[A-Za-z]+(?:['-][A-Za-z]+)?$",
   },
   {
     type: 'text',
